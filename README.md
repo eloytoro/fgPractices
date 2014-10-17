@@ -3,7 +3,7 @@
 
 ##The alias pattern
 Exposing controller functionality can be a tricky task if you're trying to stablish communication between directives.
-Among the techniques that achieve this are:
+Among the techniques that achieve this there are:
 ###Broadcasting Events
 ```javascript
 // Parent scope
@@ -33,7 +33,7 @@ There are obvious downsides to this
 }]);
 
 // Parent controller
-.controller('MyController, ['MyDirectiveAPI', function(MyDirectiveAPI) {
+.controller('MyController', ['MyDirectiveAPI', function(MyDirectiveAPI) {
   MyDirectiveAPI.value = 300;
 }]);
 ```
@@ -57,5 +57,4 @@ This won't be able to control which directives change whenever the value mutates
   }
 }
 ```
-The only downside about doing this is that exported content wont be able to be (safely) accessed until the directive links
-It's recommended that you only export functionality that would be used after the linking process happens
+The only downside about doing this is that the functionality wont be exported until the directive links.
