@@ -26,7 +26,7 @@ There are obvious downsides to this
 });
 
 // Directive logic
-.directive('MyDirective, ['$scope', 'MyDirectiveAPI', function($scope, MyDirectiveAPI) {
+.directive('MyDirective', ['$scope', 'MyDirectiveAPI', function($scope, MyDirectiveAPI) {
   $scope.$watch('value', function(val) {
     this.value = val;
   });
