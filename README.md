@@ -58,3 +58,36 @@ This won't be able to control which directives change whenever the value mutates
 }
 ```
 The only downside about doing this is that the functionality wont be exported until the directive links.
+
+##Views dependant on resource queries
+Whenever you're building a view based on a model you're likely to encouter a very simple, very common isue: your model hasnt arrived  to your front-end applicatin at the moment of `onload`
+This cause a lot of confussion in your view controller
+
+###In-controller ajax query
+```javascript
+.controller('ViewCtrl', function($scope, UserResource) {
+  $scope.user = UserResource.get({ id: 1 });
+});
+```
+The obvious downside to this is that your `$scope.user` promise wont hold the model until it resolves, which means you will have to check constantly its status.
+
+###Route resolving (RECOMMENDED)
+Most routers support this feature.
+```javascript
+.route({
+  url: '/user/:id',
+  controller: 'ViewCtrl',
+  resolve: {
+    user: function(UserResource) {
+      return UserResource.get({ id: 1});
+    }
+  }
+})
+
+/* your controller injects the resolved resource as a dependency */
+
+.controller('ViewCtrl', function($scope, user) {
+  $scope.user = user;
+});
+```
+This way the controller isnt present until the `user` resource is loaded, so you have your model when the controller initializes.
