@@ -1,6 +1,61 @@
 #fg-practices
 4Geeks' guide to clean, structured code using AngularJS
 
+##Module Definitions
+```javascript
+// avoid
+var app = angular.module('app', []);
+app.controller();
+
+// recommended
+angular
+    .module('app', []) // only inject dependencies when initializing
+    .config()
+```
+
+##Controller definition
+Sometimes when defining services, directives or routes you ought to fill the controller field with it's declaration...
+```javascript
+.route({
+    url: '/user/:id',
+    controller: function($scope) {/*...*/}
+});
+```
+However this pollutes the file with _lots_ of code and in some circumnstanses it's better if you define that controller somewhere else
+```javascript
+// app.js
+.route({
+    url: '/user/:id',
+    controller: 'UserCtrl'
+});
+
+// controllers/user.js
+.controller('UserCtrl', function ($scope) {
+    /*...*/
+});
+```
+
+##Application logic defined within the DOM
+Often the average AngularJS developer has to make a tough choice: define application logic within the view or within the view's controller.
+Keep in mind that when working with a team usually there are areas of expertise; front-end developers stick to .js files and logic whereas web designers work around .css and .html files.
+Things could get very confusing for both parties when someone tries to meet both worlds and it's in your best interest to keep them separate.
+It's a futile effort to narrow this to a single example, but you'll get the idea
+```html
+<div class="container" ng-show="isVisible && isAvailable || checkForModels($index)" />
+```
+Could be something like
+```html
+<div class="container" ng-show="shown()" />
+```
+```javascript
+$scope.shown = function () {/* logic goes here */};
+```
+
+##Native javascript objects
+AngularJS supports a whole set of services that override native javascript _system_ calls such as `setTimeout` or `window`
+We encourage you user these services over the default ones because they can be logged, debuged or updated.
+[Check the documentation for a full list of services](https://docs.angularjs.org/api/ng/service)
+
 ##The alias pattern
 Exposing controller functionality can be a tricky task if you're trying to stablish communication between directives.
 Among the techniques that achieve this there are:
@@ -92,3 +147,58 @@ Most routers support this feature.
 });
 ```
 This way the controller isnt present until the `user` resource is loaded, so you have your model when the controller initializes.
+
+##Promise Chaining
+If you don't know what a promise is then checkout [domenic's article on promises](https://gist.github.com/domenic/3889970) and [angular's documentation for $q](https://docs.angularjs.org/api/ng/service/$q)
+All of angular's asynchronous calls (such as resource queries or http requests) work with promises and we encourage you to squeeze the most out of them.
+
+###Pyramid of Doom
+```javascript
+step1(function (value1) {
+    step2(value1, function(value2) {
+        step3(value2, function(value3) {
+            step4(value3, function(value4) {
+                // Do something with value4
+            });
+        });
+    });
+});
+```
+We've all been part in the everlasting ordeal of perpetuating the pyramid of doom across the lengths of javascript code.
+
+###Using .then
+```javascript
+Q.fcall(promisedStep1)
+.then(promisedStep2)
+.then(promisedStep3)
+.then(promisedStep4)
+.then(function (value4) {
+    // Do something with value4
+})
+.catch(function (error) {
+    // Handle any error from all above steps
+})
+.done();
+```
+Much more organized, promises allow you to chain them dynamically across the thread that defines them and it's always cool to return promises for others to keep chaining them!
+```javascript
+.controller('ExampleCtrl', function ($q, $http) {
+    this.asyncRequest = function () {
+        return $http({/*...*/});
+    };
+
+    this.asyncRequest()
+    .then(function (data) {
+        /*...*/
+    });
+})
+```
+
+###Resource queries
+Resources work with promises as well, use them!
+```javascript
+$scope.users = UserResource.query(function () {
+    console.log($scope.users) // shows all queried users
+});
+console.log($scope.users) // shows an unfulfilled promise
+```
