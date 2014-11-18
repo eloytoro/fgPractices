@@ -41,7 +41,7 @@ Keep in mind that when working with a team usually there are areas of expertise;
 Things could get very confusing for both parties when someone tries to meet both worlds and it's in your best interest to keep them separate.
 It's a futile effort to narrow this to a single example, but you'll get the idea
 ```html
-<div class="container" ng-show="isVisible && isAvailable || checkForModels($index)" />
+<div class="container" ng-show="isVisible || isAvailable || checkForModels($index)" />
 ```
 Could be something like
 ```html
@@ -166,7 +166,7 @@ step1(function (value1) {
 ```
 We've all been part in the everlasting ordeal of perpetuating the pyramid of doom across the lengths of javascript code.
 
-###Using .then
+###Using .then (RECOMMENDED)
 ```javascript
 Q.fcall(promisedStep1)
 .then(promisedStep2)
