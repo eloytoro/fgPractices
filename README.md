@@ -37,9 +37,9 @@ There are obvious downsides to this
   MyDirectiveAPI.value = 300;
 }]);
 ```
-This won't be able to control which directives change whenever the value mutates as it's global to all directives
+You wouldn't be able to control which directives alter because the value mutates globally to all directives
 
-###(RECOMENDED) The alias pattern
+###The alias pattern (RECOMENDED)
 ```javascript
 .directive('MyDirective', function() {
   return {
@@ -61,7 +61,8 @@ The only downside about doing this is that the functionality wont be exported un
 
 ##Views dependant on resource queries
 Whenever you're building a view based on a model you're likely to encouter a very simple, very common isue: your model hasnt arrived  to your front-end applicatin at the moment of `onload`
-This cause a lot of confussion in your view controller
+This cause a lot of confussion in your view controller.
+Do note that this only applies when the view is absolutely dependant on the model value due for retrieval.
 
 ###In-controller ajax query
 ```javascript
