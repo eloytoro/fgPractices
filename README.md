@@ -50,6 +50,31 @@ Could be something like
 ```javascript
 $scope.shown = function () {/* logic goes here */};
 ```
+Same goes for controllers, **avoid** referencing controllers in your DOM.
+Usually when this happens is becuase the developer is taking a step away from component-oriented design.
+For example, you are creating an administrative panel for some user in your web application:
+
+###Naive approach
+```html
+<!-- Avoid this -->
+<div class="userPanel" ng-controller="UserPanelController" />
+```
+
+###Component-oriented approach
+```javascript
+// Declare a directive
+.directive('userPanel', function () {
+    return {
+        scope: { user: '=' },
+        controller: 'UserPanelController'
+    };
+});
+```
+```html
+<!-- Inside your DOM -->
+<user-panel user="user" />
+```
+
 
 ##Native javascript objects
 AngularJS supports a whole set of services that override native javascript _system_ calls such as `setTimeout` or `window`
