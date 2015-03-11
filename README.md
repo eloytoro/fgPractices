@@ -160,7 +160,7 @@ Most routers support this feature.
   controller: 'ViewCtrl',
   resolve: {
     user: function(UserResource) {
-      return UserResource.get({ id: 1});
+      return UserResource.get({ id: 1}).$promise;
     }
   }
 })
