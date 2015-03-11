@@ -102,14 +102,14 @@ There are obvious downsides to this
 ###Using a service
 ```javascript
 .service('MyDirectiveAPI', function() {
-  this.value = 0;
+    this.value = 0;
 });
 
 // Directive logic
 .directive('MyDirective', ['$scope', 'MyDirectiveAPI', function($scope, MyDirectiveAPI) {
-  $scope.$watch('value', function(val) {
-    this.value = val;
-  });
+    $scope.$watch('value', function(val) {
+        this.value = val;
+    });
 }]);
 
 // Parent controller
@@ -122,20 +122,17 @@ You wouldn't be able to control which directives alter because the value mutates
 ###The alias pattern (RECOMENDED)
 ```javascript
 .directive('MyDirective', function() {
-  return {
-    scope: {
-      alias: '='
-    }
-    controller: function() {
-      this.exports = {};
-
-      this.exports.move = function () {/*...*/};
-    },
-    link: function (scope, element, attrs, controller) {
-      scope.alias = controller.exports;
-    }
-  }
-}
+    return {
+        scope: { alias: '@?' }
+        controller: function() {
+            this.move = function () {/*...*/};
+        },
+        link: function (scope, element, attrs, controller) {
+            if (scope.alias)
+                scope.$parent[scope.alias] = controller;
+        }
+    };
+});
 ```
 The only downside about doing this is that the functionality wont be exported until the directive links.
 
@@ -147,7 +144,7 @@ Do note that this only applies when the view is absolutely dependant on the mode
 ###In-controller ajax query
 ```javascript
 .controller('ViewCtrl', function($scope, UserResource) {
-  $scope.user = UserResource.get({ id: 1 });
+    $scope.user = UserResource.get({ id: 1 });
 });
 ```
 The obvious downside to this is that your `$scope.user` promise wont hold the model until it resolves, which means you will have to check constantly its status.
@@ -156,19 +153,19 @@ The obvious downside to this is that your `$scope.user` promise wont hold the mo
 Most routers support this feature.
 ```javascript
 .route({
-  url: '/user/:id',
-  controller: 'ViewCtrl',
-  resolve: {
-    user: function(UserResource) {
-      return UserResource.get({ id: 1}).$promise;
+    url: '/user/:id',
+    controller: 'ViewCtrl',
+    resolve: {
+        user: function(UserResource) {
+            return UserResource.get({ id: 1}).$promise;
+        }
     }
-  }
 })
 
 /* your controller injects the resolved resource as a dependency */
 
 .controller('ViewCtrl', function($scope, user) {
-  $scope.user = user;
+    $scope.user = user;
 });
 ```
 This way the controller isnt present until the `user` resource is loaded, so you have your model when the controller initializes.
@@ -194,16 +191,16 @@ We've all been part in the everlasting ordeal of perpetuating the pyramid of doo
 ###Using .then (RECOMMENDED)
 ```javascript
 Q.fcall(promisedStep1)
-.then(promisedStep2)
-.then(promisedStep3)
-.then(promisedStep4)
-.then(function (value4) {
-    // Do something with value4
-})
-.catch(function (error) {
-    // Handle any error from all above steps
-})
-.done();
+    .then(promisedStep2)
+    .then(promisedStep3)
+    .then(promisedStep4)
+    .then(function (value4) {
+        // Do something with value4
+    })
+    .catch(function (error) {
+        // Handle any error from all above steps
+    })
+    .done();
 ```
 Much more organized, promises allow you to chain them dynamically across the thread that defines them and it's always cool to return promises for others to keep chaining them!
 ```javascript
@@ -213,9 +210,9 @@ Much more organized, promises allow you to chain them dynamically across the thr
     };
 
     this.asyncRequest()
-    .then(function (data) {
-        /*...*/
-    });
+        .then(function (data) {
+            /*...*/
+        });
 })
 ```
 
