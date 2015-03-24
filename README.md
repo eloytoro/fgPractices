@@ -227,8 +227,11 @@ console.log($scope.users) // shows an unfulfilled promise
 
 ##Form Validation
 Often at times we're validating many forms across our app, many of which are similar.
+
 But this task might seem slow and tedious because our understanding of angular forms tells us that these have to be validated programatically.
+
 Even thought we're provided with a set of pre-defined directives that help us achieve correctness in our every field there are times where some cases require some kind of special validation, such as values that depend on another values.
+
 But the real problem lies when we're validating many forms upon the same logic and we end up re-defining the same html or javascript code for every instance.
 
 ###Naive approach
@@ -246,7 +249,7 @@ $scope.$watch('myValue', function (val) {
 });
 ```
 
-###Model-defined form validation
+###Model-defined form validation (RECOMMENDED)
 Understanding forms as models comes out natural, most of the times you're creating a form that exposes model values, but letting the form define the model's logic is wrong, it should be the other way around: **models should define how forms are validated**.
 Take this directive for example
 ```javascript
@@ -254,9 +257,9 @@ Take this directive for example
     return {
         restrict: 'A',
         require: ['form?', 'ngForm?'],
-        link: function (scope, element, attrs, form) {
-            if (!form) return;
-            form.myField.$validators.isAwesomeEnough = function (val) {
+        link: function (scope, element, attrs, formCtrl) {
+            if (!formCtrl) return;
+            formCtrl.myField.$validators.isAwesomeEnough = function (val) {
                 return val === 'awesome';
             };
         }
